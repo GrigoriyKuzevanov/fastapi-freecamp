@@ -2,25 +2,6 @@ from pydantic import BaseModel, EmailStr
 from datetime import datetime
 
 
-class PostBase(BaseModel):
-    title: str
-    content: str
-    published: bool = True  # default True if not in request body
-
-
-class PostCreate(PostBase):
-    pass
-
-
-class PostOut(PostBase):
-    published: bool
-    created_at: datetime
-    id: int
-
-    class Config:
-        from_attributes = True
-
-
 class UserBase(BaseModel):
     email: EmailStr
     password: str
@@ -50,3 +31,23 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     id: str | None = None
+
+
+class PostBase(BaseModel):
+    title: str
+    content: str
+    published: bool = True  # default True if not in request body
+
+
+class PostCreate(PostBase):
+    pass
+
+
+class PostOut(PostBase):
+    owner_id: int
+    created_at: datetime
+    id: int
+    owner: UserOut
+
+    class Config:
+        from_attributes = True

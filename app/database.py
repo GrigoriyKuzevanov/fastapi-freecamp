@@ -1,7 +1,14 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, DeclarativeBase
+from .config import settings
 
-SQLALCHEMY_DATABASE_URL = "postgresql://fastapi_freecamp_user:fastapi_freecamp_password@localhost:5432/fastapi_freecamp_db"
+
+DB_PORT = settings.db_port
+DB_USER = settings.db_user
+DB_NAME = settings.db_name
+DB_HOST = settings.db_host
+DB_PASSWORD = settings.db_password
+SQLALCHEMY_DATABASE_URL = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
