@@ -7,28 +7,10 @@ from .routers import posts, users, auth, votes
 from .config import settings
 
 
-models.Base.metadata.create_all(bind=engine)
+# models.Base.metadata.create_all(bind=engine)
 
 
 app = FastAPI()
-
-
-# while True:
-#     try:
-#         conn = psycopg2.connect(
-#             host="localhost",
-#             database="fastapi_freecamp_db",
-#             user="fastapi_freecamp_user",
-#             password="fastapi_freecamp_password",
-#             cursor_factory=RealDictCursor,
-#         )
-#         cursor = conn.cursor()
-#         print("Database connection was succesful!")
-#         break
-#     except Exception as error:
-#         print("Connecting to database faild")
-#         print("Error: ", error)
-#         time.sleep(2)
 
 
 app.include_router(posts.router)

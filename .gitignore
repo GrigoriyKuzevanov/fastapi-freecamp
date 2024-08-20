@@ -29,4 +29,8 @@ archive.zip
 # macOS
 .DS_Store
 
+
+
 .env
+
+versions/*.py
