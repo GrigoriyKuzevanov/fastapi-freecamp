@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, Response, status
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from .. import models, oauth2, schemas
@@ -7,11 +7,14 @@ from ..database import get_db
 
 router = APIRouter(
     prefix="/posts",
-    tags=["Posts"],
+    tags=[
+        "Posts",
+    ],
 )
 
 
-@router.get("/", response_model=list[schemas.PostOut])
+# @router.get("/", response_model=list[schemas.PostOut])
+@router.get("/", response_model=list[schemas.PostOutVotes])
 def get_posts(
     limit: int = 10,
     skip: int = 0,
@@ -19,36 +22,36 @@ def get_posts(
     db: Session = Depends(get_db),
     current_user: int = Depends(oauth2.get_current_user),
 ):
-    # cursor.execute("""SELECT * FROM posts""")
-    # posts = cursor.fetchall()
 
     stmt = (
-        select(models.Post)
+        select(models.Post, func.count(models.Vote.post_id).label("votes"))
+        .join(models.Vote, models.Post.id == models.Vote.post_id, isouter=True)
+        .group_by(models.Post.id)
         .filter(models.Post.title.contains(search))
         .limit(limit)
         .offset(skip)
     )
-    result = db.execute(stmt).all()
-    posts = [row[0] for row in result]
+
+    posts = db.execute(stmt).mappings().all()
 
     return posts
 
 
-@router.get("/{post_id}", response_model=schemas.PostOut)
+@router.get("/{post_id}", response_model=schemas.PostOutVotes)
 def get_post(
     post_id: int,
     db: Session = Depends(get_db),
     current_user: int = Depends(oauth2.get_current_user),
 ):
-    # cursor.execute("""SELECT * FROM posts WHERE id = %s""", (str(post_id),))
-    # post = cursor.fetchone()
-    # if not post:
-    #     raise HTTPException(
-    #         status_code=status.HTTP_404_NOT_FOUND,
-    #         detail=f"Post with id: {post_id} was not found",
-    #     )
 
-    post = db.get(models.Post, post_id)
+    stmt = (
+        select(models.Post, func.count(models.Vote.post_id).label("votes"))
+        .join(models.Vote, models.Post.id == models.Vote.post_id, isouter=True)
+        .group_by(models.Post.id)
+        .filter(models.Post.id == post_id)
+    )
+
+    post = db.execute(stmt).mappings().first()
 
     if not post:
         raise HTTPException(
