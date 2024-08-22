@@ -1,0 +1,32 @@
+version: "3"
+services:
+    
+    api:
+        image: hiddo/fastapi-freecamp
+        depends_on:
+            - postgres
+        ports:
+            # - <port on localhost>:<port on container>
+            - 80:8000
+        environment:
+            - DB_HOST=${DB_HOST}
+            - DB_PORT=${DB_PORT}
+            - DB_PASSWORD=${DB_PASSWORD}
+            - DB_USER=${DB_USER}
+            - DB_NAME=${DB_NAME}
+            - SECRET_KEY=${SECRET_KEY}
+            - ALGORITHM=${ALGORITHM}
+            - ACCESS_TOKEN_EXPIRE_MINUTES=${ACCESS_TOKEN_EXPIRE_MINUTES}
+
+
+    postgres:
+        image: postgres
+        environment:
+            - POSTGRES_PASSWORD=${DB_PASSWORD}
+            - POSTGRES_DB=${DB_NAME}
+
+        volumes:
+            - postgres-db:/var/lib/postgresql/data
+
+volumes:
+    postgres-db:
