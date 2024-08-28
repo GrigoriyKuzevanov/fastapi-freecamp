@@ -34,3 +34,6 @@ archive.zip
 .env
 
 versions/*.py
+
+test_calculations.py
+calculations.py
