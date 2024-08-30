@@ -81,7 +81,7 @@ def authorized_client(client, token):
 
 
 @pytest.fixture
-def test_posts(test_user: dict, session: Session):
+def test_posts(test_user: dict, test_user2: dict, session: Session):
     posts_data = [
         {
             "title": "first title",
@@ -98,6 +98,11 @@ def test_posts(test_user: dict, session: Session):
             "content": "third content",
             "owner_id": test_user.get("id"),
         },
+        {
+            "title": "fourth title",
+            "content": "fourth content",
+            "owner_id": test_user2.get("id"),
+        },
     ]
 
     posts_models = [models.Post(**post) for post in posts_data]
@@ -108,3 +113,28 @@ def test_posts(test_user: dict, session: Session):
     posts = session.scalars(select(models.Post)).all()
 
     return posts
+
+
+@pytest.fixture
+def test_user2(client):
+    user_data = {
+        "email": "test-user2@mail.com",
+        "password": "test-password2",
+    }
+
+    response = client.post("/users/", json=user_data)
+
+    assert response.status_code == 201
+
+    new_user = response.json()
+    new_user["password"] = user_data["password"]
+
+    return new_user
+
+
+@pytest.fixture
+def test_vote(test_posts, session, test_user):
+    new_vote = models.Vote(post_id=test_posts[1].id, user_id=test_user.get("id"))
+    session.add(new_vote)
+    session.commit()
+
