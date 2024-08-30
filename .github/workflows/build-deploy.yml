@@ -67,7 +67,7 @@ jobs:
           builder: ${{steps.buildx.outputs.name}}
           push: true
           tags: ${{secrets.DOCKER_HUB_USERNAME}}/fastapi-freecamp:latest
-          cache-from: type=local,dest=/tmp/.buildx-cache
+          cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
         
       - name: Image digest
