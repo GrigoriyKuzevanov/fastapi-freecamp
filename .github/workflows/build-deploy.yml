@@ -4,6 +4,15 @@ on: [push, pull_request]
 
 jobs:
   job1:
+    env:
+      DB_HOST: localhost
+      DB_PORT: 5432
+      DB_PASSWORD: fastapi_freecamp_password
+      DB_USER: fastapi_freecamp_user
+      DB_NAME: fastapi_freecamp_db
+      SECRET_KEY: 97ed2cf10dcb17fab6b20f3612560fcb8f7f4595a987440f95e4ccb8c8f940fa
+      ALGORITHM: HS256
+      ACCESS_TOKEN_EXPIRE_MINUTES: 60
     runs-on: ubuntu-latest
     steps:
       - name: pulling git repo
@@ -20,4 +29,3 @@ jobs:
         run: |
           pip install pytest
           pytest
-          
