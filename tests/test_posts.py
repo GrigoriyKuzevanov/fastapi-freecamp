@@ -1,4 +1,5 @@
 import pytest
+
 from app import schemas
 
 
@@ -37,13 +38,18 @@ def test_get_one_post(authorized_client, test_posts):
     assert post.Post.title == test_posts[0].title
 
 
-@pytest.mark.parametrize("title, content, published", [
-    ("test-title", "test-content", True),
-    ("test-2-title", "test-2-content", False),
-    ("test-3-title", "test-3-content", True),
-])
+@pytest.mark.parametrize(
+    "title, content, published",
+    [
+        ("test-title", "test-content", True),
+        ("test-2-title", "test-2-content", False),
+        ("test-3-title", "test-3-content", True),
+    ],
+)
 def test_create_post(authorized_client, test_user, title, content, published):
-    response = authorized_client.post("/posts/", json={"title": title, "content": content, "published": published})
+    response = authorized_client.post(
+        "/posts/", json={"title": title, "content": content, "published": published}
+    )
 
     created_post = schemas.PostOut(**response.json())
 
@@ -55,7 +61,9 @@ def test_create_post(authorized_client, test_user, title, content, published):
 
 
 def test_create_post_default_published_true(authorized_client):
-    response = authorized_client.post("/posts/", json={"title": "test-title", "content": "test-content"})
+    response = authorized_client.post(
+        "/posts/", json={"title": "test-title", "content": "test-content"}
+    )
 
     created_post = schemas.PostOut(**response.json())
 
@@ -64,7 +72,9 @@ def test_create_post_default_published_true(authorized_client):
 
 
 def test_unauthorized_user_create_post(client):
-    response = client.post("/posts/", json={"title": "test-title", "content": "test-content"})
+    response = client.post(
+        "/posts/", json={"title": "test-title", "content": "test-content"}
+    )
 
     assert response.status_code == 401
 
@@ -77,7 +87,7 @@ def test_unauthorized_user_delete_post(client, test_posts):
 
 def test_delete_post_success(authorized_client, test_posts):
     response = authorized_client.delete(f"/posts/{test_posts[0].id}")
-    
+
     assert response.status_code == 204
 
 

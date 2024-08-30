@@ -137,4 +137,3 @@ def test_vote(test_posts, session, test_user):
     new_vote = models.Vote(post_id=test_posts[1].id, user_id=test_user.get("id"))
     session.add(new_vote)
     session.commit()
-
